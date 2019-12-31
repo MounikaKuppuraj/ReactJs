@@ -4,6 +4,7 @@ import Persons from '../components/Persons/Persons';
 import Cockpit from '../components/Cockpit/Cockpit';
 import withClass from '../components/hoc/withClass';
 import Auxillary from '../components/hoc/Auxillary';
+import AuthContext from '../context/auth-context';
 class App extends Component{
   constructor(){
     super();
@@ -16,7 +17,8 @@ class App extends Component{
       ],
       showPersons:false,
       showCockpit:true,
-      changeCounter:0
+      changeCounter:0,
+      isAuthenticated:false
     }
   }
  static getDerivedStateFromProps(props,state){
@@ -63,6 +65,9 @@ componentDidUpdate(){
   persons.splice(personIndex,1);
   this.setState({persons:persons});
  }
+ loginHandler=()=>{
+  this.setState({isAuthenticated:true});
+ }
   render(){
     console.log('[App.js] render');
     let persons=null;
@@ -75,6 +80,7 @@ componentDidUpdate(){
     return (
       <Auxillary>
         <button onClick={()=>{this.setState({showCockpit:!this.state.showCockpit})}}>Remove Cockpit</button>
+        <AuthContext.Provider value={{authenticate:this.state.isAuthenticated,login:this.loginHandler}}>
         {
           this.state.showCockpit ? <Cockpit 
           data={this.props.data}
@@ -83,6 +89,7 @@ componentDidUpdate(){
           toggle={this.togglePersonsHandler}/> : null
         }
         {persons}
+        </AuthContext.Provider>
       </Auxillary>
     );
   }
